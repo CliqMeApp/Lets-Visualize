@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Let's Visualize</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #ffffff; 
+        }
+        h1 {
+            text-align: center;
+        }
+        .table-container {
+            height: 300px;
+            overflow-y: auto;
+            margin: 0 auto;
+            width: 90%;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ffffff;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f9e79f;
+            color: #000000;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            text-align: center;
+        }
+        td{
+            text-align: center;
+        }
+        .chart-container {
+            margin-top: 20px;
+            text-align: center;
+            font-size: large;
+        }
+        .updatechart{
+            padding: 8px;
+            border-radius: 10px; 
+            border: 1px solid rgb(164, 164, 164, 0.4); 
+            cursor: pointer; 
+            background-color: #ffffff; 
+            color: rgb(0, 0, 0); 
+            margin-right: 20px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        button:hover{
+            background-color: #f8f7f7; 
+            color: rgb(0, 0, 0); 
+        }
+    </style>
+</head>
+<body>
+    <h1>{{filename}}</h1>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    {% for column in graphData.columns %}
+                        <th>{{ column }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in graphData.itertuples() %}
+                    <tr>
+                        {% for value in row[1:] %}
+                            <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="chart-container">
+        <label for="chart-type">Select Chart Type:</label>
+        <select id="chart-type" style="margin-right: 20px;">
+            <option value="line">Line</option>
+            <option value="bar">Bar</option>
+            <option value="pie">Pie</option>
+        </select>
+        <label for="x-axis">X-axis:</label>
+        <select id="x-axis" style="margin-right: 20px;">
+            {% for column in graphData.columns %}
+                <option value="{{ column }}">{{ column }}</option>
+            {% endfor %}
+        </select>
+        <label for="y-axis">Y-axis:</label>
+        <select id="y-axis" style="margin-right: 20px;">
+            {% for column in graphData.columns %}
+                <option value="{{ column }}">{{ column }}</option>
+            {% endfor %}
+        </select>
+        <button class="updatechart" onclick="updateChart()">
+            Update Chart
+        </button>
+        <a href="{{ url_for('upload_file') }}">
+            <button class="updatechart">Upload new File</button>
+        </a>
+        
+    </div>
+    <canvas id="chart"></canvas>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let chartInstance;
+
+        function updateChart() {
+            const chartType = document.getElementById('chart-type').value;
+            const xAxis = document.getElementById('x-axis').value;
+            const yAxis = document.getElementById('y-axis').value;
+
+            console.log(`Chart type: ${chartType}, X-axis: ${xAxis}, Y-axis: ${yAxis}`); // Debugging log
+
+            fetch(`/visualize?chartType=${chartType}&xAxis=${xAxis}&yAxis=${yAxis}&filename={{ filename }}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Data received:', data); // Debugging log
+
+                    const ctx = document.getElementById('chart').getContext('2d');
+                    if (chartInstance) {
+                        chartInstance.destroy();
+                    }
+                    chartInstance = new Chart(ctx, {
+                        type: chartType,
+                        data: {
+                            labels: data.labels,
+                            datasets: [{
+                                label: yAxis,
+                                data: data.data
+                            }]
+                        }
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error)); // Debugging log
+        }
+    </script>
+</body>
+</html>

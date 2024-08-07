@@ -17,3 +17,29 @@
    ```sh
    git clone https://github.com/yourusername/lets-visualize.git
    cd lets-visualize
+
+2. **Install Dependencies**
+
+   ```sh
+   pip install -r requirements.txt
+   
+3. **Run the Application**
+
+   ```sh
+   flask run
+
+lets-visualize/
+├── app.py                  # Main Flask application
+├── templates/
+│   ├── upload.html         # File upload page template
+│   └── dataReview.html     # Data review and chart generation page template
+├── uploads/                # Directory to store uploaded files
+├── requirements.txt        # Python dependencies
+└── README.md               # Project readme file
+
+## Dependencies
+
+- Flask: Web framework for Python.
+- Pandas: Data manipulation and analysis library.
+- Chart.js: JavaScript library for creating interactive charts.
+- Werkzeug: Comprehensive WSGI web application library.

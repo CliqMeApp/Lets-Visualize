@@ -27,7 +27,7 @@
 
    ```sh
    flask run
-
+```
 lets-visualize/
 ├── app.py                  # Main Flask application
 ├── templates/
@@ -36,7 +36,7 @@ lets-visualize/
 ├── uploads/                # Directory to store uploaded files
 ├── requirements.txt        # Python dependencies
 └── README.md               # Project readme file
-
+```
 ## Dependencies
 
 - Flask: Web framework for Python.
